@@ -1,57 +1,34 @@
-import java.util.ArrayList;
-
 public class Album {
     private String albumTitle;
-    private String releaseDate; // Use a String for simplicity, or LocalDate if needed.
-    private Artist artist; // The artist who created the album.
-    private ArrayList<Songs> songList; // List of songs in the album.
+    private Artist artist;
+    private Songs[] songList;  // Array to store the songs in the album
+    private int songCount = 0;
 
-    // Constructor to initialize the album with title, date, and artist.
-    public Album(String albumTitle, String releaseDate, Artist artist) {
+    // Constructor to initialize the album with title and artist
+    public Album(String albumTitle, Artist artist, int maxSongs) {
         this.albumTitle = albumTitle;
-        this.releaseDate = releaseDate;
         this.artist = artist;
-        this.songList = new ArrayList<>(); // Initialize an empty list of songs.
+        this.songList = new Songs[maxSongs];  // Initialize song array
     }
 
-    // Add a song to the album.
+    // Method to add a song to the album's song array
     public void addSong(Songs song) {
-        songList.add(song);
+        if (songCount < songList.length) {
+            songList[songCount++] = song;
+        } else {
+            System.out.println("Song array is full!");
+        }
     }
 
-    // Get the list of songs in the album.
-    public ArrayList<Songs> getSongList() {
-        return songList;
-    }
-
-    // Get the album title.
     public String getAlbumTitle() {
         return albumTitle;
     }
 
-    // Get the release date.
-    public String getReleaseDate() {
-        return releaseDate;
-    }
-
-    // Get the artist of the album.
     public Artist getArtist() {
         return artist;
     }
 
-    // toString() method to display album details.
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Album: ").append(albumTitle)
-          .append(" | Release Date: ").append(releaseDate)
-          .append(" | Artist: ").append(artist.getName()).append("\n")
-          .append("Songs:\n");
-
-        for (Songs song : songList) {
-            sb.append(" - ").append(song.getTitle()).append("\n");
-        }
-
-        return sb.toString();
+    public Songs[] getSongList() {
+        return songList;
     }
 }
