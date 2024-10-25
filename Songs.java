@@ -1,38 +1,33 @@
 public class Songs {
     private String title;
-    private double duration;
-    private boolean isSingle;
-    private String album;  // Optional, if it belongs to an album.
+    private String duration;
+    private Artist artist;
+    private String album;
 
-    // Constructor to initialize a song object.
-    public Songs(String title, double duration, boolean isSingle, String album) {
+    public Songs(String title, String duration, Artist artist, String album) {
         this.title = title;
         this.duration = duration;
-        this.isSingle = isSingle;
+        this.artist = artist;
         this.album = album;
     }
 
-    // Getters to access private attributes.
     public String getTitle() {
         return title;
     }
 
-    public double getDuration() {
+    public String getDuration() {
         return duration;
     }
 
-    public boolean isSingle() {
-        return isSingle;
+    public Artist getArtist() {
+        return artist;
     }
 
     public String getAlbum() {
-        return album;
+        return album != null ? album : "Single";
     }
 
-    // toString() method to display the song information.
-    @Override
     public String toString() {
-        return "Song: " + title + " (" + duration + " mins) " +
-               (isSingle ? "[Single]" : "[Album: " + album + "]");
+        return "Song: " + title + " | Duration: " + duration + " | Artist: " + artist.toString() + " | Album: " + getAlbum();
     }
 }
