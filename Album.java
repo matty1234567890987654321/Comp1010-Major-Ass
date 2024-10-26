@@ -4,12 +4,13 @@ public class Album {
     private Songs[] songsArray; // Array to store the songs in the album
     private int songCount = 0; // Tracks the current number of songs in the album
     private int currentSongIndex = -1; // Tracks the current song for navigation
+    private static final int MAX_SONGS = 100; // Maximum capacity for songs in the album
 
     // Constructor to initialize the album with title, artist, and maximum song capacity.
-    public Album(String albumTitle, Artist artist, int maxSongs) {
+    public Album(String albumTitle, Artist artist) {
         this.albumTitle = albumTitle;
         this.artist = artist;
-        this.songsArray = new Songs[maxSongs]; // Initialize song array with given capacity
+        this.songsArray = new Songs[MAX_SONGS]; // Initialize song array with maximum capacity
     }
 
     // Adds a song to the album if there is space available.
@@ -81,6 +82,7 @@ public class Album {
     public void shuffleSongs() {
         for (int i = songCount - 1; i > 0; i--) {
             int j = (int) (Math.random() * (i + 1)); // Random index
+
             // Swap songs
             Songs temp = songsArray[i];
             songsArray[i] = songsArray[j];
