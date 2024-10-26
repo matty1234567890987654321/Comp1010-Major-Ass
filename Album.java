@@ -1,8 +1,9 @@
 public class Album {
     private String albumTitle; // Title of the album
     private Artist artist; // Artist of the album
-    private Songs[] songsArray;  // Array to store the songs in the album
+    private Songs[] songsArray; // Array to store the songs in the album
     private int songCount = 0; // Tracks the current number of songs in the album
+    private int currentSongIndex = 0; // Tracks the current song for navigation
 
     // Constructor to initialize the album with title, artist, and maximum song capacity.
     public Album(String albumTitle, Artist artist, int maxSongs) {
@@ -18,6 +19,41 @@ public class Album {
         } else {
             System.out.println("Song array is full!"); // Notify if array is at capacity
         }
+    }
+
+    // Removes a song by title, if found in the album.
+    public void removeSong(String title) {
+        for (int i = 0; i < songCount; i++) {
+            if (songsArray[i].getTitle().equals(title)) { // Assuming Songs has a getTitle() method
+                for (int j = i; j < songCount - 1; j++) {
+                    songsArray[j] = songsArray[j + 1]; // Shift songs left
+                }
+                songsArray[--songCount] = null; // Clear last spot and decrease count
+                System.out.println("Song removed: " + title);
+                return;
+            }
+        }
+        System.out.println("Song not found: " + title);
+    }
+
+    // Navigates to the next song in the album.
+    public Songs nextSong() {
+        if (songCount == 0) {
+            System.out.println("No songs in album!");
+            return null;
+        }
+        currentSongIndex = (currentSongIndex + 1) % songCount;
+        return songsArray[currentSongIndex];
+    }
+
+    // Navigates to the previous song in the album.
+    public Songs previousSong() {
+        if (songCount == 0) {
+            System.out.println("No songs in album!");
+            return null;
+        }
+        currentSongIndex = (currentSongIndex - 1 + songCount) % songCount;
+        return songsArray[currentSongIndex];
     }
 
     // Retrieves the album title.
