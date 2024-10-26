@@ -1,14 +1,13 @@
-
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Library {
-    private ArrayList<Songs> allSongs;
-    private Scanner scanner;
+    private ArrayList<Songs> librarySongs; // List of all songs in the library
+    private Scanner scanner; // Scanner for user input
 
     // Constructor that accepts the song list from Main
-    public Library(ArrayList<Songs> allSongs) {
-        this.allSongs = allSongs;
+    public Library(ArrayList<Songs> librarySongs) {
+        this.librarySongs = librarySongs;
         this.scanner = new Scanner(System.in);
     }
 
@@ -19,125 +18,109 @@ public class Library {
 
         if (choice.equalsIgnoreCase("yes")) {
             userSearch();
-        } 
-        else if (choice.equalsIgnoreCase("no")) {
+        } else if (choice.equalsIgnoreCase("no")) {
             displayAllSongs();
-        } 
-        else {
+        } else {
             System.out.println("\nInvalid input. Please answer with 'yes' or 'no'.");
             start(); // Re-prompt the user if the input is invalid
         }
     }
 
-    // Method to display all songs in the library if the user doesn't want to search by artist
+    // Display all songs in the library if the user doesn't want to search by artist
     private void displayAllSongs() {
         System.out.println("\nAll Songs in the Library:");
-        for (int i = 0; i < allSongs.size(); i++) {
-            System.out.println(i + ": " + allSongs.get(i).toString());
+        for (int i = 0; i < librarySongs.size(); i++) {
+            System.out.println(i + ": " + librarySongs.get(i).toString());
         }
-
-        // Prompt user to select a song with validation
-        selectSong(allSongs);
+        selectSong(librarySongs); // Prompt user to select a song
     }
 
-    // Method to handle user search and selection
+    // Prompts user to enter an artist name and searches for their songs
     public void userSearch() {
         System.out.print("\nEnter the name of the artist: ");
         String artistName = scanner.nextLine();
 
         // Search for the artist
-        ArrayList<Songs> artistSongs = searchByArtist(artistName);
+        ArrayList<Songs> filteredSongs = searchByArtist(artistName);
 
-        if (artistSongs.isEmpty()) {
+        if (filteredSongs.isEmpty()) {
             System.out.println("\nArtist not found. Please try again.\n");
             userSearch(); // Recursive call if no artist is found
-        } 
-        else {
-            // Artist found, move to the next step
-            handleYesNoPrompt(artistSongs);
+        } else {
+            handleYesNoPrompt(filteredSongs); // Prompt user to view songs or albums
         }
     }
 
-    // Handles the yes/no prompt for viewing all songs or selecting an album
-    private void handleYesNoPrompt(ArrayList<Songs> artistSongs) {
+    // Prompt user to view all songs or albums by the artist
+    private void handleYesNoPrompt(ArrayList<Songs> filteredSongs) {
         System.out.print("\nWould you like to view all songs by the artist? (yes/no): ");
         String choice = scanner.nextLine();
 
         if (choice.equalsIgnoreCase("yes")) {
-            displaySongs(artistSongs);
-        } 
-        else if (choice.equalsIgnoreCase("no")) {
-            displayAlbums(artistSongs);
-        } 
-        else {
+            displaySongs(filteredSongs);
+        } else if (choice.equalsIgnoreCase("no")) {
+            displayAlbums(filteredSongs);
+        } else {
             System.out.println("\nInvalid input. Please answer with 'yes' or 'no'.\n");
-            handleYesNoPrompt(artistSongs); // Re-prompt the user with the same question
+            handleYesNoPrompt(filteredSongs); // Re-prompt the user
         }
     }
 
-    // Search method for finding songs by an artist
+    // Searches for songs by a specific artist
     private ArrayList<Songs> searchByArtist(String artistName) {
-        ArrayList<Songs> artistSongs = new ArrayList<>();
-        for (Songs song : allSongs) {
+        ArrayList<Songs> filteredSongs = new ArrayList<>();
+        for (Songs song : librarySongs) {
             if (song.getArtist().getName().equalsIgnoreCase(artistName)) {
-                artistSongs.add(song);
+                filteredSongs.add(song);
             }
         }
-        return artistSongs;
+        return filteredSongs;
     }
 
-    // Display all albums by the artist and automatically retry if the album is not found
-    private void displayAlbums(ArrayList<Songs> artistSongs) {
+    // Displays all unique albums by the artist and prompts user to select an album
+    private void displayAlbums(ArrayList<Songs> filteredSongs) {
         ArrayList<String> albums = new ArrayList<>();
-
-        // Collect unique album names
-        for (Songs song : artistSongs) {
+        for (Songs song : filteredSongs) {
             if (!albums.contains(song.getAlbum())) {
                 albums.add(song.getAlbum());
             }
         }
 
-        // Display albums
         System.out.println("\nAlbums:");
         for (int i = 0; i < albums.size(); i++) {
             System.out.println(i + ": " + albums.get(i));
         }
-
-        // Prompt user to select an album
-        selectAlbum(albums, artistSongs);
+        selectAlbum(albums, filteredSongs);
     }
 
-    // Album selection method with manual validation for input
-    private void selectAlbum(ArrayList<String> albums, ArrayList<Songs> artistSongs) {
+    // Prompts user to select an album and displays its songs
+    private void selectAlbum(ArrayList<String> albums, ArrayList<Songs> filteredSongs) {
         System.out.print("\nEnter the album number to view its songs: ");
         String input = scanner.nextLine();
 
-        // Validate that the input is a valid integer
         if (isInteger(input)) {
             int albumIndex = Integer.parseInt(input);
 
             if (albumIndex >= 0 && albumIndex < albums.size()) {
                 String selectedAlbum = albums.get(albumIndex);
                 ArrayList<Songs> albumSongs = new ArrayList<>();
-                for (Songs song : artistSongs) {
+                for (Songs song : filteredSongs) {
                     if (song.getAlbum().equals(selectedAlbum)) {
                         albumSongs.add(song);
                     }
                 }
                 displaySongs(albumSongs);
-            } 
-            else {
+            } else {
                 System.out.println("\nInvalid selection. Please enter a valid album number.\n");
-                selectAlbum(albums, artistSongs); // Automatically prompt to reselect an album
+                selectAlbum(albums, filteredSongs);
             }
-        } 
-        else {
+        } else {
             System.out.println("\nInvalid input. Please enter a number.\n");
-            selectAlbum(albums, artistSongs); // Automatically prompt to reselect an album
+            selectAlbum(albums, filteredSongs);
         }
     }
 
-    // Helper method to check if a string is a valid integer
+    // Checks if a string is a valid integer
     private boolean isInteger(String input) {
         try {
             Integer.parseInt(input);
@@ -147,42 +130,37 @@ public class Library {
         }
     }
 
-    // Display all songs in a list (for either artist or album selection)
+    // Displays a list of songs and prompts the user to select one to play
     private void displaySongs(ArrayList<Songs> songsList) {
         System.out.println("\nSongs:");
         for (int i = 0; i < songsList.size(); i++) {
             System.out.println(i + ": " + songsList.get(i).toString());
         }
-
-        // Prompt user to select a song with validation
         selectSong(songsList);
     }
 
-    // Song selection method with manual validation for input
+    // Prompts user to select a song to play
     private void selectSong(ArrayList<Songs> songsList) {
         System.out.print("\nEnter the song number to play: ");
         String input = scanner.nextLine();
 
-        // Validate that the input is a valid integer
         if (isInteger(input)) {
             int songIndex = Integer.parseInt(input);
 
             if (songIndex >= 0 && songIndex < songsList.size()) {
                 System.out.println("\nYou selected: " + songsList.get(songIndex).toString());
                 playQueue(songIndex, songsList);
-            } 
-            else {
+            } else {
                 System.out.println("\nInvalid selection. Please enter a valid song number.\n");
-                selectSong(songsList); // Automatically prompt to reselect a song
+                selectSong(songsList);
             }
-        } 
-        else {
+        } else {
             System.out.println("\nInvalid input. Please enter a number.\n");
-            selectSong(songsList); // Automatically prompt to reselect a song
+            selectSong(songsList);
         }
     }
 
-    // The same playQueue method, adapted to work with any song list
+    // Plays songs in a queue with options to navigate or shuffle
     private void playQueue(int currentIndex, ArrayList<Songs> songList) {
         boolean playing = true;
         while (playing) {
