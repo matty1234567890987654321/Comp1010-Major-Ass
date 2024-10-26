@@ -3,7 +3,7 @@ public class Album {
     private Artist artist; // Artist of the album
     private Songs[] songsArray; // Array to store the songs in the album
     private int songCount = 0; // Tracks the current number of songs in the album
-    private int currentSongIndex = 0; // Tracks the current song for navigation
+    private int currentSongIndex = -1; // Tracks the current song for navigation
 
     // Constructor to initialize the album with title, artist, and maximum song capacity.
     public Album(String albumTitle, Artist artist, int maxSongs) {
@@ -16,6 +16,7 @@ public class Album {
     public void addSong(Songs song) {
         if (songCount < songsArray.length) {
             songsArray[songCount++] = song; // Add song and increase count
+            System.out.println("Added song: " + song.getTitle());
         } else {
             System.out.println("Song array is full!"); // Notify if array is at capacity
         }
@@ -30,6 +31,9 @@ public class Album {
                 }
                 songsArray[--songCount] = null; // Clear last spot and decrease count
                 System.out.println("Song removed: " + title);
+                if (currentSongIndex >= songCount) {
+                    currentSongIndex = songCount - 1; // Adjust current song index if it exceeds count
+                }
                 return;
             }
         }
@@ -43,6 +47,7 @@ public class Album {
             return null;
         }
         currentSongIndex = (currentSongIndex + 1) % songCount;
+        System.out.println("Now playing: " + songsArray[currentSongIndex].getTitle());
         return songsArray[currentSongIndex];
     }
 
@@ -53,6 +58,7 @@ public class Album {
             return null;
         }
         currentSongIndex = (currentSongIndex - 1 + songCount) % songCount;
+        System.out.println("Now playing: " + songsArray[currentSongIndex].getTitle());
         return songsArray[currentSongIndex];
     }
 
@@ -69,5 +75,30 @@ public class Album {
     // Retrieves the list of songs in the album.
     public Songs[] getSongsArray() {
         return songsArray;
+    }
+
+    // Shuffle the songs in the album
+    public void shuffleSongs() {
+        for (int i = songCount - 1; i > 0; i--) {
+            int j = (int) (Math.random() * (i + 1)); // Random index
+            // Swap songs
+            Songs temp = songsArray[i];
+            songsArray[i] = songsArray[j];
+            songsArray[j] = temp;
+        }
+        System.out.println("Songs shuffled.");
+    }
+
+    // Retrieves the current song being played
+    public Songs getCurrentSong() {
+        if (currentSongIndex >= 0 && currentSongIndex < songCount) {
+            return songsArray[currentSongIndex];
+        }
+        return null; // No song currently playing
+    }
+
+    // Get the total number of songs in the album
+    public int getSongCount() {
+        return songCount;
     }
 }
