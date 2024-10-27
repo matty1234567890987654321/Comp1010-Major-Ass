@@ -1,19 +1,18 @@
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.io.*;
 
-// Class representing the music library
 public class Library {
     private final ArrayList<Songs> librarySongs; // List of all songs in the library
     private final Scanner scanner; // Scanner for user input
+    private static final String FILE_NAME = "songs.txt"; // File to read/write songs data
 
-    // Constructor that initializes the song list and scanner
     public Library(ArrayList<Songs> librarySongs) {
         this.librarySongs = librarySongs;
         this.scanner = new Scanner(System.in);
+        loadSongsFromFile(); // Load songs from file when the library is initialized
     }
 
-    // Main method to start the library interaction
     public void start() {
         System.out.print("\nWould you like to search by artist? (yes/no): ");
         String choice = scanner.nextLine();
@@ -24,36 +23,32 @@ public class Library {
             displayAllSongs();
         } else {
             System.out.println("\nInvalid input. Please answer with 'yes' or 'no'.");
-            start(); // Re-prompt the user if the input is invalid
+            start();
         }
     }
 
-    // Displays all songs in the library if the user doesn't want to search by artist
     public void displayAllSongs() {
         System.out.println("\nAll Songs in the Library:");
         for (int i = 0; i < librarySongs.size(); i++) {
             System.out.println(i + ": " + librarySongs.get(i).toString());
         }
-        selectSong(librarySongs); // Prompt user to select a song
+        selectSong(librarySongs);
     }
 
-    // Prompts user to enter an artist name and searches for their songs
     public void userSearch() {
         System.out.print("\nEnter the name of the artist: ");
         String artistName = scanner.nextLine();
 
-        // Search for songs by the specified artist
         ArrayList<Songs> filteredSongs = searchByArtist(artistName);
 
         if (filteredSongs.isEmpty()) {
             System.out.println("\nArtist not found. Please try again.\n");
-            userSearch(); // Recursive call if no artist is found
+            userSearch();
         } else {
-            handleYesNoPrompt(filteredSongs); // Prompt user to view songs or albums
+            handleYesNoPrompt(filteredSongs);
         }
     }
 
-    // Prompts user to view all songs or albums by the artist
     private void handleYesNoPrompt(ArrayList<Songs> filteredSongs) {
         System.out.print("\nWould you like to view all songs by the artist? (yes/no): ");
         String choice = scanner.nextLine();
@@ -64,11 +59,10 @@ public class Library {
             displayAlbums(filteredSongs);
         } else {
             System.out.println("\nInvalid input. Please answer with 'yes' or 'no'.\n");
-            handleYesNoPrompt(filteredSongs); // Re-prompt the user
+            handleYesNoPrompt(filteredSongs);
         }
     }
 
-    // Searches for songs by a specific artist
     public ArrayList<Songs> searchByArtist(String artistName) {
         ArrayList<Songs> filteredSongs = new ArrayList<>();
         for (Songs song : librarySongs) {
@@ -79,7 +73,6 @@ public class Library {
         return filteredSongs;
     }
 
-    // Displays all unique albums by the artist and prompts user to select an album
     private void displayAlbums(ArrayList<Songs> filteredSongs) {
         ArrayList<String> albums = new ArrayList<>();
         for (Songs song : filteredSongs) {
@@ -95,7 +88,6 @@ public class Library {
         selectAlbum(albums, filteredSongs);
     }
 
-    // Prompts user to select an album and displays its songs
     private void selectAlbum(ArrayList<String> albums, ArrayList<Songs> filteredSongs) {
         System.out.print("\nEnter the album number to view its songs: ");
         String input = scanner.nextLine();
@@ -122,7 +114,6 @@ public class Library {
         }
     }
 
-    // Checks if a string is a valid integer
     private boolean isInteger(String input) {
         try {
             Integer.parseInt(input);
@@ -132,7 +123,6 @@ public class Library {
         }
     }
 
-    // Displays a list of songs and prompts the user to select one to play
     private void displaySongs(ArrayList<Songs> songsList) {
         System.out.println("\nSongs:");
         for (int i = 0; i < songsList.size(); i++) {
@@ -141,7 +131,6 @@ public class Library {
         selectSong(songsList);
     }
 
-    // Prompts user to select a song to play
     private void selectSong(ArrayList<Songs> songsList) {
         System.out.print("\nEnter the song number to play: ");
         String input = scanner.nextLine();
@@ -151,8 +140,7 @@ public class Library {
 
             if (songIndex >= 0 && songIndex < songsList.size()) {
                 System.out.println("\nYou selected: " + songsList.get(songIndex).toString());
-                PlayQueue playQueue = new PlayQueue(songsList); // Create PlayQueue instance
-                playQueue.startPlaying(songIndex); // Start playing the selected song
+                playQueue(songIndex, songsList);
             } else {
                 System.out.println("\nInvalid selection. Please enter a valid song number.\n");
                 selectSong(songsList);
@@ -163,47 +151,60 @@ public class Library {
         }
     }
 
-    // Save the library to a file
-    public void saveLibrary(String filename) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+    private void playQueue(int currentIndex, ArrayList<Songs> songList) {
+        boolean playing = true;
+        while (playing) {
+            System.out.println("\nNow playing: " + songList.get(currentIndex).getTitle());
+            System.out.println("[Previous <] [Next >] [Shuffle ?] [Quit q]");
+
+            String input = scanner.nextLine();
+
+            switch (input) {
+                case "<" -> currentIndex = (currentIndex - 1 + songList.size()) % songList.size();
+                case ">" -> currentIndex = (currentIndex + 1) % songList.size();
+                case "?" -> currentIndex = (int) (Math.random() * songList.size());
+                case "q" -> {
+                    playing = false;
+                    System.out.println("\nExiting the queue.");
+                }
+                default -> System.out.println("\nInvalid input. Please choose one of the following: [Previous <] [Next >] [Shuffle ?] [Quit q]");
+            }
+        }
+    }
+
+    // Method to load songs from a file
+    private void loadSongsFromFile() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(","); // Assuming CSV format
+                if (parts.length == 4) {
+                    String title = parts[0];
+                    String duration = parts[1];
+                    String artistName = parts[2];
+                    String album = parts[3];
+
+                    // Create a new song and add it to the library
+                    librarySongs.add(new Songs(title, duration, new Artist(artistName, 10), album));
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading from file: " + e.getMessage());
+        }
+    }
+
+    // Method to save songs to a file
+    public void saveSongsToFile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
             for (Songs song : librarySongs) {
-                writer.write(song.toString()); // Assuming Songs has a suitable toString method
+                writer.write(song.getTitle() + "," +
+                             song.getDuration() + "," +
+                             song.getArtist().getName() + "," +
+                             song.getAlbum());
                 writer.newLine();
             }
-            System.out.println("\nLibrary saved to " + filename);
         } catch (IOException e) {
-            System.out.println("\nAn error occurred while saving the library: " + e.getMessage());
+            System.out.println("Error writing to file: " + e.getMessage());
         }
-    }
-
-    // Load the library from a file
-    public void loadLibrary(String filename) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-            String line;
-            librarySongs.clear(); // Clear the current library before loading
-            while ((line = reader.readLine()) != null) {
-                // Assuming you have a method to create a Songs object from a string
-                librarySongs.add(Songs.fromString(line)); // Call fromString directly
-            }
-            System.out.println("\nLibrary loaded from " + filename);
-        } catch (IOException e) {
-            System.out.println("\nAn error occurred while loading the library: " + e.getMessage());
-        }
-    }
-}
-
-// Class to manage song playback
-class PlayQueue {
-    private final ArrayList<Songs> songList; // List of songs in the queue
-
-    // Constructor that accepts the song list
-    public PlayQueue(ArrayList<Songs> songList) {
-        this.songList = songList;
-    }
-
-    // Starts playing the song at the specified index
-    public void startPlaying(int songIndex) {
-        Songs songToPlay = songList.get(songIndex);
-        System.out.println("\nNow playing: " + songToPlay);
     }
 }
