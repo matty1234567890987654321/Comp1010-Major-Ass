@@ -149,7 +149,8 @@ public class Library {
 
             if (songIndex >= 0 && songIndex < songsList.size()) {
                 System.out.println("\nYou selected: " + songsList.get(songIndex).toString());
-                playQueue(songIndex, songsList);
+                PlayQueue playQueue = new PlayQueue(songsList); // Create PlayQueue instance
+                playQueue.startPlaying(songIndex); // Start playing the selected song
             } else {
                 System.out.println("\nInvalid selection. Please enter a valid song number.\n");
                 selectSong(songsList);
@@ -159,15 +160,25 @@ public class Library {
             selectSong(songsList);
         }
     }
+}
 
-    // Plays songs in a queue with options to navigate or shuffle
-    private void playQueue(int currentIndex, ArrayList<Songs> songList) {
+// New PlayQueue class to manage song playback
+class PlayQueue {
+    private ArrayList<Songs> songList; // List of songs in the queue
+
+    // Constructor that accepts the list of songs
+    public PlayQueue(ArrayList<Songs> songList) {
+        this.songList = songList;
+    }
+
+    // Starts playing the song at the given index
+    public void startPlaying(int currentIndex) {
         boolean playing = true;
         while (playing) {
             System.out.println("\nNow playing: " + songList.get(currentIndex).getTitle());
             System.out.println("[Previous <] [Next >] [Shuffle ?] [Quit q]");
 
-            String input = scanner.nextLine();
+            String input = new Scanner(System.in).nextLine();
 
             switch (input) {
                 case "<":
