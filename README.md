@@ -92,6 +92,14 @@ Songs.java contains a constructor for the class that initialises all the attribu
 Tests 
 For unit testing, we employed the junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, and static org.junit.jupiter.api.Assertions.* imports alongside a test runner to systematically validate core functionalities of the music library system, focusing on album, artist, song, and library management.The tests encompass several key areas, General Imports: JUnit annotations and assertions manage setup and validate test outcomes.Album Tests: Confirm functionality for adding, removing, navigating (next/previous), and shuffling songs, as well as verifying album details (title and artist).Artist Tests: Assess setting artist names, adding songs within defined limits, and enforcing capacity constraints.Library Tests: Ensure correct search functionality for songs by artist, accurate display of all songs, identification of unique albums, and iteration through a song queue.Main Tests: Cover the addition and removal of songs from albums, song navigation, and library search functions. Song Tests: Validate song creation, attribute retrieval (title, duration, artist), and string representation.
 Task allocation 
+
+student details 
+
+Matthew La 47907118
+Sonya Kim 48553190
+Alan Kim 47740302
+Tom Kilburn 47670282
+
 Matthew La 30%
 
 Component A
