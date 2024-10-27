@@ -1,6 +1,6 @@
 public class Artist {
-    private final String name; // Name of the artist
-    private final Songs[] songs; // Array to store songs by the artist
+    private String name; // Name of the artist
+    private Songs[] songs; // Array to store songs by the artist
     private int songCount; // Tracks the current number of songs
 
     // Constructor to initialize the artist's name and song capacity
@@ -16,13 +16,11 @@ public class Artist {
     }
 
     // Adds a song to the artist's song list if there's space available
-    public boolean addSong(Songs song) {
+    public void addSong(Songs song) {
         if (songCount < songs.length) {
             songs[songCount++] = song; // Add song and increase count
-            return true; // Song added successfully
         } else {
             System.out.println("Song array is full for artist: " + name);
-            return false; // Indicate failure to add
         }
     }
 
@@ -31,8 +29,8 @@ public class Artist {
         return songs;
     }
 
-    // Retrieves the current count of songs
-    public int getSongCount() {
-        return songCount;
+    // Returns the artist's name as a string
+    public String toString() {
+        return name;
     }
 }
