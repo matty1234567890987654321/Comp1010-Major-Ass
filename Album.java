@@ -1,16 +1,16 @@
 public class Album {
-    private String albumTitle; // Title of the album
-    private Artist artist; // Artist of the album
-    private Songs[] songsArray; // Array to store the songs in the album
+    private final String albumTitle; // Title of the album
+    private final Artist artist; // Artist of the album
+    private final Songs[] songsArray; // Array to store the songs in the album
     private int songCount = 0; // Tracks the current number of songs in the album
     private int currentSongIndex = -1; // Tracks the current song for navigation
-    private static final int maxSongs = 100; // Maximum capacity for songs in the album
+    private static final int MAX_SONGS = 100; // Maximum capacity for songs in the album
 
     // Constructor to initialize the album with title, artist, and maximum song capacity.
     public Album(String albumTitle, Artist artist) {
         this.albumTitle = albumTitle;
         this.artist = artist;
-        this.songsArray = new Songs[maxSongs]; // Initialize song array with maximum capacity
+        this.songsArray = new Songs[MAX_SONGS]; // Initialize song array with maximum capacity
     }
 
     // Adds a song to the album if there is space available.
