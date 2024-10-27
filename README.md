@@ -68,15 +68,8 @@ Our program consists of five classes, five tests and this document.
 | + userSearch(): void |
 | + searchByArtist(artistName: String): ArrayList<Songs> |
 | + saveLibrary(filename: String): void |
-| + loadLibrary(filename: String): void |
-+------------------+
-
-+------------------+
-|    PlayQueue     |
-+------------------+
-| - songList: ArrayList<Songs> |
-+------------------+
-| + startPlaying(currentIndex: int): void |
+| + loadLibrary(filename: String): void
+| + PlayQueue (int currentIndex, ArrayList<Songs> songList)|
 +------------------+
 
 +------------------+
