@@ -27,7 +27,7 @@ public class Library {
     }
 
     // Display all songs in the library if the user doesn't want to search by artist
-    private void displayAllSongs() {
+    public void displayAllSongs() {
         System.out.println("\nAll Songs in the Library:");
         for (int i = 0; i < librarySongs.size(); i++) {
             System.out.println(i + ": " + librarySongs.get(i).toString());
@@ -67,7 +67,7 @@ public class Library {
     }
 
     // Searches for songs by a specific artist
-    private ArrayList<Songs> searchByArtist(String artistName) {
+    public ArrayList<Songs> searchByArtist(String artistName) {
         ArrayList<Songs> filteredSongs = new ArrayList<>();
         for (Songs song : librarySongs) {
             if (song.getArtist().getName().equalsIgnoreCase(artistName)) {
