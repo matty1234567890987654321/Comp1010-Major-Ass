@@ -1,6 +1,6 @@
 public class Artist {
-    private String name; // Name of the artist
-    private Songs[] songs; // Array to store songs by the artist
+    private final String name; // Name of the artist
+    private final Songs[] songs; // Array to store songs by the artist
     private int songCount; // Tracks the current number of songs
 
     // Constructor to initialize the artist's name and song capacity
@@ -30,13 +30,8 @@ public class Artist {
     }
 
     // Returns the artist's name as a string
+    @Override
     public String toString() {
         return name;
     }
 }
-
-
-
-
-
-
